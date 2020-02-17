@@ -224,10 +224,7 @@ var Conference = function (rpcClient, selfRpcId) {
    *       type: 'webrtc' | 'streaming' | 'recording' | 'sip' | 'analytics',
    *       location: {host: string(HostIPorDN), path: string(FileFullPath)} | undefined,
    *       url: string(URLofStreamingOut) | undefined
-   *     },
-   *     transport: {
-   *       protocol: 'quic' | undefined
-   *     } | undefined
+   *     }
    *   }
    * }
    */
@@ -252,8 +249,7 @@ var Conference = function (rpcClient, selfRpcId) {
           });
         });
     } else if (direction === 'out') {
-      log.info('Data info: '+sessionInfo.data);
-      return addSubscription(sessionId, sessionInfo.locality, sessionInfo.media, sessionInfo.info, sessionInfo.data
+      return addSubscription(sessionId, sessionInfo.locality, sessionInfo.media, sessionInfo.info
         ).then(() => {
           if (sessionInfo.info && sessionInfo.info.type !== 'webrtc') {
             if (sessionInfo.info.location) {
@@ -688,7 +684,6 @@ var Conference = function (rpcClient, selfRpcId) {
   };
 
   const initiateSubscription = (id, subSpec, info) => {
-    log.debug('initiateSubscription subSepc: '+JSON.stringify(subSpec)+', info: '+JSON.stringify(info));
     if (subscriptions[id]) {
       return Promise.reject('Subscription already exists');
     }
@@ -703,7 +698,7 @@ var Conference = function (rpcClient, selfRpcId) {
     return Promise.resolve('ok');
   };
 
-  const addSubscription = (id, locality, mediaSpec, info, dataSpec) => {
+  const addSubscription = (id, locality, mediaSpec, info) => {
     if (!participants[info.owner]) {
       return Promise.reject('Participant early left');
     }
@@ -971,8 +966,8 @@ var Conference = function (rpcClient, selfRpcId) {
       return callback('callback', 'error', 'Participant has not joined');
     }
 
-    if (pubInfo.media && ((pubInfo.media.audio && !participants[participantId].isPublishPermitted('audio'))
-        || (pubInfo.media.video && !participants[participantId].isPublishPermitted('video')))) {
+    if ((pubInfo.media.audio && !participants[participantId].isPublishPermitted('audio'))
+        || (pubInfo.media.video && !participants[participantId].isPublishPermitted('video'))) {
       return callback('callback', 'error', 'unauthorized');
     }
     if (pubInfo.type === 'webrtc' && pubInfo.media.tracks) {
@@ -992,11 +987,11 @@ var Conference = function (rpcClient, selfRpcId) {
       return callback('callback', 'error', 'Stream exists');
     }
 
-    if (pubInfo.media && pubInfo.media.audio && !room_config.mediaIn.audio.length) {
+    if (pubInfo.media.audio && !room_config.mediaIn.audio.length) {
       return callback('callback', 'error', 'Audio is forbiden');
     }
 
-    if (pubInfo.media && pubInfo.media.video && !room_config.mediaIn.video.length) {
+    if (pubInfo.media.video && !room_config.mediaIn.video.length) {
       return callback('callback', 'error', 'Video is forbiden');
     }
 
@@ -1347,7 +1342,6 @@ var Conference = function (rpcClient, selfRpcId) {
         callback('callback', result);
       })
       .catch((e) => {
-        log.error('accessController.init failed. '+e);
         removeSubscription(subscriptionId);
         callback('callback', 'error', e.message ? e.message : e);
       });
