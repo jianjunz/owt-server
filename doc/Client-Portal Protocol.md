@@ -565,7 +565,7 @@ This a format for client reconnects.
 
     object(P2PQuicParametersMessage)::
       {
-       type: "p2p-quic-parameters",
+       type: "quic-p2p-parameters",
        clientTransportParameters: object(P2PQuicClientParametersMessage) | undefined,
        serverTransportParameters: object(P2PQuicServerParametersMessage) | undefined
       }
@@ -646,7 +646,7 @@ Step 3: Send client QUIC transport parameters.
 {
   id: 'b1ff706f-7352-4d02-a6dc-dc840fb3963e',
   signaling: {
-    type: "p2p-quic-parameters",
+    type: "quic-p2p-parameters",
     clientTransportParameters: {
       quicKey: 'key',
       iceParameters: {
@@ -665,7 +665,7 @@ Step 4: Receive server QUIC transport paramters.
   id: ''
   status: 'soac',
   data: {
-  type: "p2p-quic-parameters",
+  type: "quic-p2p-parameters",
   serverTransportParameters:   {
     iceParameters: {
       usernameFragment: 'userfrag',
