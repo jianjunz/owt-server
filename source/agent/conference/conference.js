@@ -1830,6 +1830,15 @@ var Conference = function (rpcClient, selfRpcId) {
     callback('callback', result);
   };
 
+  that.getPortal = function(participantId, callback) {
+      log.debug('Get participant ' + participantId);
+      if (!participants[participantId]) {
+          callback('callback', 'error', 'Invalid participant ID.');
+          return;
+      }
+      callback('callback', participants[participantId].getPortal());
+  };
+
   //FIXME: Should handle updates other than authorities as well.
   that.controlParticipant = function(participantId, authorities, callback) {
     log.debug('controlParticipant', participantId, 'authorities:', authorities);
@@ -2661,7 +2670,10 @@ module.exports = function (rpcClient, selfRpcId, parentRpcId, clusterWorkerIP) {
     controlSipCall: conference.controlSipCall,
     endSipCall: conference.endSipCall,
     drawText: conference.drawText,
-    destroy: conference.destroy
+    destroy: conference.destroy,
+
+    // RPC from QUIC nodes.
+    getPortal: conference.getPortal
   };
 
   that.onFaultDetected = conference.onFaultDetected;
